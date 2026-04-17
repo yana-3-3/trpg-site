@@ -1,0 +1,506 @@
+/* ========== 방 레이아웃 ========== */
+#room-app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.room-header h2 {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.system-badge {
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+.room-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+#room-code-display {
+  font-family: monospace;
+  color: var(--text-secondary);
+  padding: 0.3rem 0.7rem;
+  background: var(--bg-primary);
+  border-radius: var(--radius);
+}
+
+.room-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 200px 1fr 340px;
+  gap: 1px;
+  background: var(--border);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.panel {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.panel h3 {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========== 참가자 ========== */
+.participants-panel ul { list-style: none; }
+
+.participants-panel li {
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.3rem;
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.participants-panel li.is-gm::before { content: "👑"; }
+.participants-panel li.is-online::after {
+  content: "●";
+  color: var(--success);
+  margin-left: auto;
+  font-size: 0.7rem;
+}
+
+/* ========== 가운데 영역 (맵 + 채팅) ========== */
+.center-area {
+  display: grid;
+  grid-template-rows: 1fr 320px;
+  background: var(--bg-primary);
+  min-height: 0;
+  gap: 1px;
+}
+
+/* ========== 맵 ========== */
+.map-container {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.map-toolbar {
+  padding: 0.5rem 0.8rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.toolbar-hint {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+#map-canvas {
+  flex: 1;
+  width: 100%;
+  display: block;
+  cursor: default;
+  touch-action: none;
+}
+
+/* ========== 채팅 ========== */
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+  min-height: 0;
+}
+
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.chat-message {
+  padding: 0.5rem 0.8rem;
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+  max-width: 95%;
+  word-wrap: break-word;
+  font-size: 0.92rem;
+}
+
+.chat-message .author {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.82rem;
+  margin-bottom: 0.15rem;
+}
+
+.chat-message .timestamp {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-left: 0.5rem;
+  font-weight: normal;
+}
+
+.chat-message.system {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* 일반 주사위 결과 */
+.chat-message.dice-roll {
+  background: linear-gradient(135deg, #0f3460, #1a4870);
+  border-left: 3px solid var(--accent);
+}
+
+.dice-roll .roll-formula {
+  font-family: monospace;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.dice-roll .roll-total {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--accent);
+  margin: 0.1rem 0;
+}
+
+.dice-roll .roll-detail {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* CoC 판정 결과 */
+.chat-message.coc-roll {
+  border-left: 4px solid var(--border);
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+}
+
+.coc-roll .coc-skill-name {
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.coc-roll .coc-target {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: normal;
+}
+
+.coc-roll .coc-roll-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 0.1rem 0;
+}
+
+.coc-roll .coc-level {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.coc-roll .coc-thresholds {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+/* 성공 단계별 색상 */
+.coc-roll.coc-critical { border-left-color: #ffd700; background: linear-gradient(135deg, #2a2500, #3d3200); }
+.coc-roll.coc-critical .coc-level { color: #ffd700; }
+.coc-roll.coc-critical .coc-roll-value { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
+
+.coc-roll.coc-extreme { border-left-color: #ff6b81; background: linear-gradient(135deg, #2a1018, #4a1828); }
+.coc-roll.coc-extreme .coc-level { color: #ff6b81; }
+.coc-roll.coc-extreme .coc-roll-value { color: #ff6b81; }
+
+.coc-roll.coc-hard { border-left-color: #4caf50; background: linear-gradient(135deg, #0f3020, #1a4a30); }
+.coc-roll.coc-hard .coc-level { color: #4caf50; }
+.coc-roll.coc-hard .coc-roll-value { color: #81c784; }
+
+.coc-roll.coc-regular { border-left-color: #64b5f6; }
+.coc-roll.coc-regular .coc-level { color: #64b5f6; }
+.coc-roll.coc-regular .coc-roll-value { color: #90caf9; }
+
+.coc-roll.coc-fail { border-left-color: #757575; opacity: 0.85; }
+.coc-roll.coc-fail .coc-level { color: #bdbdbd; }
+.coc-roll.coc-fail .coc-roll-value { color: #bdbdbd; }
+
+.coc-roll.coc-fumble { border-left-color: #d32f2f; background: linear-gradient(135deg, #2a0a0a, #4a1414); }
+.coc-roll.coc-fumble .coc-level { color: #ff5252; }
+.coc-roll.coc-fumble .coc-roll-value { color: #ff5252; text-shadow: 0 0 8px rgba(255,82,82,0.5); }
+
+/* 채팅 입력 */
+.chat-input-area {
+  border-top: 1px solid var(--border);
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-panel);
+}
+
+.dice-shortcuts {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dice-btn {
+  padding: 0.3rem 0.7rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 0.82rem;
+  transition: all 0.15s;
+}
+
+.dice-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.input-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.input-row input { flex: 1; }
+
+/* ========== 범용 캐릭터 시트 ========== */
+.generic-sheet .stat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.generic-sheet .stat-row input { flex: 1; }
+
+.custom-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.btn-remove-field {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--danger);
+  width: 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-remove-field:hover {
+  background: var(--danger);
+  color: white;
+}
+
+/* ========== CoC 7판 시트 ========== */
+.coc-sheet .sheet-header {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.coc-sheet .sheet-section {
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.coc-sheet .section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.coc-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.coc-stat {
+  background: var(--bg-panel);
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.coc-stat label {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.coc-stat input {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.3rem;
+}
+
+.stat-thresholds {
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+.btn-skill-roll {
+  padding: 0.25rem 0.5rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.btn-skill-roll:hover { background: var(--accent-hover); }
+
+.coc-sheet .derived {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.derived-stat {
+  background: var(--bg-panel);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.derived-stat label {
+  margin: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.derived-stat label input {
+  width: 50px;
+  padding: 0.2rem;
+  text-align: center;
+}
+
+.derived-stat .max {
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.skill-filter {
+  padding: 0.3rem 0.6rem !important;
+  font-size: 0.8rem !important;
+  width: 140px !important;
+  margin: 0 !important;
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 1fr 60px auto;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.skill-row .skill-name {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.skill-row .skill-value {
+  padding: 0.3rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.btn-save {
+  width: 100%;
+  margin-top: 0.8rem;
+}
+
+/* ========== 반응형 ========== */
+@media (max-width: 1100px) {
+  .room-layout {
+    grid-template-columns: 180px 1fr 300px;
+  }
+}
+
+@media (max-width: 900px) {
+  .room-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .participants-panel,
+  .sheet-panel {
+    max-height: 180px;
+  }
+
+  .center-area {
+    grid-template-rows: 1fr 260px;
+  }
+}

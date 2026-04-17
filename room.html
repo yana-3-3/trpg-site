@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORPG Table - 세션</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/room.css" />
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-header">
+      <button id="btn-back-lobby" class="btn btn-small">← 로비</button>
+      <h2 id="room-name">방 제목</h2>
+      <span id="system-badge" class="system-badge"></span>
+      <div class="room-meta">
+        <span id="room-code-display"></span>
+        <button id="btn-copy-code" class="btn btn-small">코드 복사</button>
+      </div>
+    </header>
+
+    <!-- 3단 레이아웃: 좌(참가자) / 중(맵+채팅) / 우(시트) -->
+    <main class="room-layout">
+      <!-- 왼쪽: 참가자 -->
+      <aside class="panel participants-panel">
+        <h3>참가자</h3>
+        <ul id="participants-list"></ul>
+      </aside>
+
+      <!-- 가운데: 맵 + 채팅 (세로로 분할) -->
+      <section class="center-area">
+        <!-- 맵 영역 -->
+        <div class="map-container">
+          <div class="map-toolbar">
+            <button id="btn-add-token" class="btn btn-small">+ 내 토큰</button>
+            <button id="btn-set-bg" class="btn btn-small gm-only">🖼 배경 설정</button>
+            <button id="btn-map-config" class="btn btn-small gm-only">⚙ 맵 크기</button>
+            <span class="toolbar-hint">드래그로 이동 · 우클릭으로 삭제</span>
+          </div>
+          <canvas id="map-canvas"></canvas>
+        </div>
+
+        <!-- 채팅 영역 -->
+        <div class="chat-panel">
+          <div id="chat-log" class="chat-log"></div>
+          <div class="chat-input-area">
+            <div class="dice-shortcuts">
+              <button class="dice-btn" data-roll="1d4">d4</button>
+              <button class="dice-btn" data-roll="1d6">d6</button>
+              <button class="dice-btn" data-roll="1d8">d8</button>
+              <button class="dice-btn" data-roll="1d10">d10</button>
+              <button class="dice-btn" data-roll="1d20">d20</button>
+              <button class="dice-btn" data-roll="1d100">d100</button>
+            </div>
+            <div class="input-row">
+              <input type="text" id="chat-input"
+                     placeholder="/roll 2d6+3 · /cc 50 심리학 · /ccb 60 (보너스) · /ccp 40 (페널티)"
+                     autocomplete="off" />
+              <button id="btn-send-chat" class="btn btn-primary">전송</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 오른쪽: 내 캐릭터 시트 -->
+      <aside class="panel sheet-panel">
+        <h3>내 캐릭터</h3>
+        <div id="sheet-container"></div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- 배경 이미지 URL 입력 모달 -->
+  <div id="bg-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>맵 배경 이미지</h3>
+      <p class="subtitle">공개된 이미지 URL을 입력하세요 (Imgur, 직접 호스팅 등)</p>
+      <label>이미지 URL
+        <input type="text" id="bg-url-input" placeholder="https://..." />
+      </label>
+      <div class="modal-actions">
+        <button id="btn-bg-clear" class="btn btn-secondary">배경 제거</button>
+        <button id="btn-bg-confirm" class="btn btn-primary">적용</button>
+        <button id="btn-bg-cancel" class="btn btn-secondary">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 맵 크기 설정 모달 -->
+  <div id="map-config-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>맵 크기 설정</h3>
+      <label>가로 칸 수
+        <input type="number" id="map-cols" min="5" max="80" value="20" />
+      </label>
+      <label>세로 칸 수
+        <input type="number" id="map-rows" min="5" max="80" value="15" />
+      </label>
+      <div class="modal-actions">
+        <button id="btn-map-config-confirm" class="btn btn-primary">적용</button>
+        <button id="btn-map-config-cancel" class="btn btn-secondary">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script type="module" src="js/room.js"></script>
+</body>
+</html>
