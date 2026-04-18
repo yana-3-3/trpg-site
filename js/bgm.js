@@ -264,6 +264,7 @@ export function openBGMControlModal(bgmSystem) {
   `;
 
   document.body.appendChild(modal);
+  if (window.lucide) window.lucide.createIcons();
 
   const urlInput = modal.querySelector("#bgm-url");
   const volSlider = modal.querySelector("#bgm-volume");

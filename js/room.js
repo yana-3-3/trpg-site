@@ -38,9 +38,7 @@ const btnBack = $("btn-back-lobby");
 const btnCopy = $("btn-copy-code");
 const btnToggleParticipants = $("btn-toggle-participants");
 const btnToggleSheet = $("btn-toggle-sheet");
-const btnOpenLog = $("btn-open-log");
-const btnCloseLog = $("btn-close-log");
-const logModal = $("log-modal");
+const btnToggleChat = $("btn-toggle-chat");
 
 const sheetContainer = $("sheet-container");
 const mapCanvas = $("map-canvas");
@@ -302,7 +300,7 @@ function renderCharacterDropdown() {
     item.innerHTML = `
       ${char.imageUrl ? `<img src="${escapeHtml(char.imageUrl)}" alt="" onerror="this.style.display='none'">` : '<div style="width:32px;height:32px;background:var(--bg-elevated);border-radius:6px"></div>'}
       <span class="item-name" style="color:${char.color}">${escapeHtml(char.name)}</span>
-      <button class="item-edit" title="편집">✎</button>
+      <button class="item-edit" title="편집"><i data-lucide="pencil"></i></button>
     `;
     item.addEventListener("click", (e) => {
       if (e.target.closest(".item-edit")) return;
@@ -324,12 +322,15 @@ function renderCharacterDropdown() {
   // 새 캐릭터 추가 버튼
   const addBtn = document.createElement("button");
   addBtn.className = "char-dropdown-action";
-  addBtn.textContent = "＋ 새 캐릭터 만들기";
+  addBtn.innerHTML = `<i data-lucide="user-plus"></i> 새 캐릭터 만들기`;
   addBtn.addEventListener("click", () => {
     charDropdown.classList.add("hidden");
     openCharacterEditor(charManager);
   });
   charDropdown.appendChild(addBtn);
+
+  // Lucide 아이콘 재렌더
+  if (window.lucide) window.lucide.createIcons();
 }
 
 // ===== 스탠딩 이미지 =====
@@ -703,58 +704,123 @@ function setupExport() {
   });
 }
 
-// ===== UI 토글 (사이드 패널, 로그 모달) =====
+// ===== UI 토글 (사이드 패널, 도움말 등) =====
 function setupUI() {
   btnBack.addEventListener("click", () => {
     location.href = "index.html";
   });
 
   btnCopy.addEventListener("click", () => {
-    navigator.clipboard.writeText(roomCode);
-    // 간단한 피드백
-    btnCopy.style.color = "var(--success)";
-    setTimeout(() => (btnCopy.style.color = ""), 1200);
+    navigator.clipboard.writeText(roomCode).then(() => {
+      showToast("방 코드를 복사했어요", "success");
+    }).catch(() => {
+      showToast("복사 실패", "error");
+    });
   });
 
-  // 사이드 패널 토글
+  // 사이드 패널 토글 (채팅/참가자/시트는 서로 배타적)
   const panels = {
+    "btn-toggle-chat": "panel-chat",
     "btn-toggle-participants": "panel-participants",
     "btn-toggle-sheet": "panel-sheet",
   };
+
+  function updatePanelButtons() {
+    Object.entries(panels).forEach(([btnId, panelId]) => {
+      const btn = $(btnId);
+      const panel = $(panelId);
+      if (btn && panel) {
+        btn.classList.toggle("active", !panel.classList.contains("hidden"));
+      }
+    });
+    // body 클래스로 어떤 패널이라도 열려있는지 표시
+    const anyOpen = Object.values(panels).some(pid => {
+      const p = $(pid);
+      return p && !p.classList.contains("hidden");
+    });
+    document.body.classList.toggle("panel-open", anyOpen);
+  }
 
   Object.entries(panels).forEach(([btnId, panelId]) => {
     const btn = $(btnId);
     const panel = $(panelId);
     btn?.addEventListener("click", () => {
-      // 다른 패널은 닫고 이 패널만 열기/닫기
-      Object.values(panels).forEach(pid => {
-        if (pid !== panelId) $(pid)?.classList.add("hidden");
-      });
-      panel.classList.toggle("hidden");
+      const willOpen = panel.classList.contains("hidden");
+      // 다른 패널 모두 닫기
+      Object.values(panels).forEach(pid => $(pid)?.classList.add("hidden"));
+      if (willOpen) panel.classList.remove("hidden");
+      updatePanelButtons();
+      if (willOpen && panelId === "panel-chat") {
+        setTimeout(() => { chatLog.scrollTop = chatLog.scrollHeight; }, 50);
+      }
     });
   });
 
+  // 패널 X 버튼
   document.querySelectorAll(".btn-close-panel").forEach(btn => {
     btn.addEventListener("click", () => {
       const target = $(btn.dataset.target);
       target?.classList.add("hidden");
+      updatePanelButtons();
     });
   });
 
-  // 로그 모달
-  btnOpenLog?.addEventListener("click", () => {
-    logModal.classList.remove("hidden");
-    setTimeout(() => { chatLog.scrollTop = chatLog.scrollHeight; }, 50);
+  // 도움말 모달
+  const helpModal = $("help-modal");
+  const btnHelp = $("btn-help");
+  const btnCloseHelp = $("btn-close-help");
+  btnHelp?.addEventListener("click", () => {
+    helpModal.classList.remove("hidden");
+    reRenderIcons();
   });
-  btnCloseLog?.addEventListener("click", () => logModal.classList.add("hidden"));
+  btnCloseHelp?.addEventListener("click", () => helpModal.classList.add("hidden"));
 
   // ESC로 닫기
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      document.querySelectorAll(".side-panel, .modal").forEach(el => {
-        if (!el.classList.contains("hidden")) el.classList.add("hidden");
-      });
-      charDropdown.classList.add("hidden");
+      // 모달 먼저 닫기
+      const openModal = document.querySelector(".modal:not(.hidden)");
+      if (openModal) {
+        openModal.classList.add("hidden");
+        return;
+      }
+      // 드롭다운 닫기
+      if (!charDropdown.classList.contains("hidden")) {
+        charDropdown.classList.add("hidden");
+        return;
+      }
+      // 표정 스트립이 캐릭터 선택기 밖 클릭시 자동 닫힘은 아니라서 놔둠
     }
   });
+
+  // 초기 버튼 상태 반영
+  updatePanelButtons();
 }
+
+// ===== 토스트 알림 =====
+function showToast(message, type = "") {
+  const existing = document.querySelector(".toast");
+  if (existing) existing.remove();
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transition = "opacity 0.3s";
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
+
+// ===== Lucide 아이콘 재렌더링 (동적으로 추가된 아이콘) =====
+function reRenderIcons() {
+  if (window.lucide) {
+    try { window.lucide.createIcons(); } catch (e) {}
+  }
+}
+
+// 전역에서 접근 가능하도록 (다른 모듈에서도 쓸 수 있게)
+window.__reRenderIcons = reRenderIcons;
+window.__showToast = showToast;

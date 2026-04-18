@@ -14,7 +14,6 @@ const firebaseConfig = {
   storageBucket: "trpg-site-4324e.firebasestorage.app",
   messagingSenderId: "488120799378",
   appId: "1:488120799378:web:c947c903e4c2e6b1df164b",
-  databaseURL: "https://trpg-site-4324e-default-rtdb.firebaseio.com",
 };
 
 const app = initializeApp(firebaseConfig);

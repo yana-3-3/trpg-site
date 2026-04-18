@@ -200,6 +200,7 @@ export function openCharacterEditor(manager, characterId = null) {
   `;
 
   document.body.appendChild(modal);
+  if (window.lucide) window.lucide.createIcons();
 
   const state = data;
 

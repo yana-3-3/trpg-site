@@ -293,6 +293,7 @@ export function openExportModal(roomCode, roomName) {
     </div>
   `;
   document.body.appendChild(modal);
+  if (window.lucide) window.lucide.createIcons();
 
   const setLoading = (btn, loading) => {
     btn.disabled = loading;
