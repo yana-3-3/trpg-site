@@ -7,15 +7,14 @@ import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.0/firebase
 // ⚠️ Firebase 콘솔에서 발급받은 설정으로 교체하세요.
 // Firebase 콘솔 → 프로젝트 설정 → 일반 → 내 앱 → SDK 설정
 const firebaseConfig = {
-  apiKey: "AIzaSyARuT4SCUQxqrBjgHxm6MSG6burfDf05wo",
-  authDomain: "trpg-site-4324e.firebaseapp.com",
-  databaseURL: "https://trpg-site-4324e-default-rtdb.firebaseio.com",
-  projectId: "trpg-site-4324e",
-  storageBucket: "trpg-site-4324e.firebasestorage.app",
-  messagingSenderId: "488120799378",
-  appId: "1:488120799378:web:c947c903e4c2e6b1df164b",
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXXXXXXXX",
+  appId: "1:XXXXXXXXXX:web:XXXXXXXXXX",
   // Realtime Database를 사용할 경우에만 필요
-  databaseURL: "https://trpg-site-4324e-default-rtdb.firebaseio.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
 };
 
 const app = initializeApp(firebaseConfig);

@@ -4,14 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ORPG Table - 로비</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Shippori+Mincho:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body class="lobby-body">
+
+  <!-- 배경 장식 -->
+  <div class="bg-decoration">
+    <div class="bg-grid"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+  </div>
+
   <div id="app">
-    <section id="auth-section" class="card">
-      <h1>🎲 ORPG Table</h1>
-      <p class="subtitle">친구들과 온라인으로 TRPG를 즐겨보세요</p>
-      <div class="auth-buttons">
+    <section id="auth-section" class="auth-card">
+      <div class="auth-brand">
+        <div class="brand-mark">🎲</div>
+        <h1 class="brand-title">
+          <span class="jp">卓上</span>
+          <span class="en">ORPG TABLE</span>
+        </h1>
+        <p class="brand-tagline">オンラインTRPGセッション</p>
+      </div>
+
+      <div class="auth-body">
+        <p class="subtitle">친구들과 온라인으로 TRPG를 즐겨보세요</p>
         <button id="btn-google-login" class="btn btn-primary btn-google">
           <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
             <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.264h2.908c1.702-1.567 2.684-3.874 2.684-6.621z"/>
@@ -26,23 +45,28 @@
 
     <section id="lobby-section" class="hidden">
       <header class="lobby-header">
-        <h2>🎲 ORPG 로비</h2>
+        <div class="lobby-brand">
+          <span class="brand-mark-sm">🎲</span>
+          <h2>ORPG 로비</h2>
+        </div>
         <div class="user-info">
           <img id="user-avatar" class="avatar" alt="" />
           <span id="user-display-name"></span>
-          <button id="btn-logout" class="btn btn-small">로그아웃</button>
+          <button id="btn-logout" class="btn btn-ghost btn-small">로그아웃</button>
         </div>
       </header>
 
       <div class="lobby-actions">
-        <button id="btn-create-room" class="btn btn-primary">새 방 만들기</button>
+        <button id="btn-create-room" class="btn btn-primary">
+          <span class="btn-icon">＋</span> 새 방 만들기
+        </button>
         <div class="join-room">
-          <input type="text" id="join-room-id" placeholder="방 코드 입력" />
-          <button id="btn-join-room" class="btn btn-secondary">참가</button>
+          <input type="text" id="join-room-id" placeholder="방 코드 (예: ABC123)" />
+          <button id="btn-join-room" class="btn btn-secondary">입장</button>
         </div>
       </div>
 
-      <h3>내가 참여한 방</h3>
+      <h3 class="section-heading">참여 중인 세션</h3>
       <ul id="my-rooms-list" class="room-list">
         <li class="empty">아직 참여한 방이 없습니다.</li>
       </ul>
@@ -62,8 +86,8 @@
         </select>
       </label>
       <div class="modal-actions">
-        <button id="btn-create-confirm" class="btn btn-primary">만들기</button>
         <button id="btn-create-cancel" class="btn btn-secondary">취소</button>
+        <button id="btn-create-confirm" class="btn btn-primary">만들기</button>
       </div>
     </div>
   </div>

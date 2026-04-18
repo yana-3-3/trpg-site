@@ -3,102 +3,196 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ORPG Table - 세션</title>
+  <title>ORPG Table</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Shippori+Mincho:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/room.css" />
 </head>
-<body>
+<body class="room-body">
   <div id="room-app">
-    <header class="room-header">
-      <button id="btn-back-lobby" class="btn btn-small">← 로비</button>
-      <h2 id="room-name">방 제목</h2>
-      <span id="system-badge" class="system-badge"></span>
-      <div class="room-meta">
-        <span id="room-code-display"></span>
-        <button id="btn-copy-code" class="btn btn-small">코드 복사</button>
+
+    <!-- ============ 최상단 바 ============ -->
+    <header class="top-bar">
+      <button id="btn-back-lobby" class="icon-btn" title="로비로">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="top-title">
+        <h1 id="room-name">방 제목</h1>
+        <span id="system-badge" class="badge"></span>
+      </div>
+      <div class="top-actions">
+        <!-- BGM 개인 볼륨/뮤트 컨트롤 -->
+        <div id="bgm-control" class="bgm-control-wrapper"></div>
+
+        <button id="btn-bgm-gm" class="icon-btn gm-only" title="BGM 설정 (GM)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </button>
+
+        <button id="btn-export-log" class="icon-btn" title="로그 내보내기">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+
+        <span id="room-code-display" class="room-code-display"></span>
+        <button id="btn-copy-code" class="icon-btn" title="코드 복사">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+        <button id="btn-toggle-participants" class="icon-btn" title="참가자">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </button>
+        <button id="btn-toggle-sheet" class="icon-btn" title="캐릭터 시트">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </button>
       </div>
     </header>
 
-    <!-- 3단 레이아웃: 좌(참가자) / 중(맵+채팅) / 우(시트) -->
-    <main class="room-layout">
-      <!-- 왼쪽: 참가자 -->
-      <aside class="panel participants-panel">
-        <h3>참가자</h3>
-        <ul id="participants-list"></ul>
-      </aside>
+    <!-- ============ 메인 스테이지 ============ -->
+    <main class="stage">
 
-      <!-- 가운데: 맵 + 채팅 (세로로 분할) -->
-      <section class="center-area">
-        <!-- 맵 영역 -->
-        <div class="map-container">
-          <div class="map-toolbar">
-            <button id="btn-add-token" class="btn btn-small">+ 내 토큰</button>
-            <button id="btn-set-bg" class="btn btn-small gm-only">🖼 배경 설정</button>
-            <button id="btn-map-config" class="btn btn-small gm-only">⚙ 맵 크기</button>
-            <span class="toolbar-hint">드래그로 이동 · 우클릭으로 삭제</span>
-          </div>
-          <canvas id="map-canvas"></canvas>
+      <!-- 맵 영역 (배경) -->
+      <div class="map-wrapper">
+        <canvas id="map-canvas"></canvas>
+
+        <!-- 맵 툴바 (우상단 플로팅) -->
+        <div class="map-toolbar-floating">
+          <button id="btn-add-token" class="mini-btn" title="내 토큰 추가">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            토큰
+          </button>
+          <button id="btn-set-bg" class="mini-btn gm-only" title="배경 이미지">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            배경
+          </button>
+          <button id="btn-map-config" class="mini-btn gm-only" title="맵 크기">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            격자
+          </button>
         </div>
+      </div>
 
-        <!-- 채팅 영역 -->
-        <div class="chat-panel">
-          <div id="chat-log" class="chat-log"></div>
-          <div class="chat-input-area">
-            <div class="dice-shortcuts">
-              <button class="dice-btn" data-roll="1d4">d4</button>
-              <button class="dice-btn" data-roll="1d6">d6</button>
-              <button class="dice-btn" data-roll="1d8">d8</button>
-              <button class="dice-btn" data-roll="1d10">d10</button>
-              <button class="dice-btn" data-roll="1d20">d20</button>
-              <button class="dice-btn" data-roll="1d100">d100</button>
-            </div>
-            <div class="input-row">
-              <input type="text" id="chat-input"
-                     placeholder="/roll 2d6+3 · /cc 50 심리학 · /ccb 60 (보너스) · /ccp 40 (페널티)"
-                     autocomplete="off" />
-              <button id="btn-send-chat" class="btn btn-primary">전송</button>
-            </div>
-          </div>
+      <!-- 비주얼 노벨 대사 박스 (마지막 발언 표시) -->
+      <div id="dialogue-box" class="dialogue-box hidden">
+        <div class="dialogue-portrait">
+          <img id="dialogue-portrait-img" alt="" />
         </div>
-      </section>
+        <div class="dialogue-content">
+          <div class="dialogue-name-wrap">
+            <span id="dialogue-name" class="dialogue-name"></span>
+          </div>
+          <div id="dialogue-text" class="dialogue-text"></div>
+        </div>
+        <button id="btn-close-dialogue" class="dialogue-close" title="닫기">×</button>
+      </div>
 
-      <!-- 오른쪽: 내 캐릭터 시트 -->
-      <aside class="panel sheet-panel">
-        <h3>내 캐릭터</h3>
-        <div id="sheet-container"></div>
-      </aside>
+      <!-- 캐릭터 스탠딩 영역 -->
+      <div id="standing-area" class="standing-area"></div>
+
     </main>
-  </div>
 
-  <!-- 배경 이미지 URL 입력 모달 -->
-  <div id="bg-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>맵 배경 이미지</h3>
-      <p class="subtitle">공개된 이미지 URL을 입력하세요 (Imgur, 직접 호스팅 등)</p>
-      <label>이미지 URL
-        <input type="text" id="bg-url-input" placeholder="https://..." />
-      </label>
-      <div class="modal-actions">
-        <button id="btn-bg-clear" class="btn btn-secondary">배경 제거</button>
-        <button id="btn-bg-confirm" class="btn btn-primary">적용</button>
-        <button id="btn-bg-cancel" class="btn btn-secondary">취소</button>
+    <!-- ============ 하단 채팅 바 ============ -->
+    <footer class="chat-bar">
+      <!-- 캐릭터 선택기 -->
+      <div class="character-selector">
+        <button id="btn-char-menu" class="char-current">
+          <img id="char-current-img" class="char-avatar-sm" alt="" />
+          <div class="char-current-info">
+            <div id="char-current-name" class="char-name">나로 말하기</div>
+            <div class="char-hint">클릭해서 캐릭터 전환</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+        </button>
+        <div id="char-dropdown" class="char-dropdown hidden"></div>
+
+        <!-- 표정 전환 스트립 (활성 캐릭터에 이미지 여러 개 있을 때만 표시) -->
+        <div id="expression-strip" class="expression-strip hidden"></div>
+      </div>
+
+      <div class="chat-main">
+        <div class="dice-shortcuts">
+          <button class="dice-btn" data-roll="1d4">d4</button>
+          <button class="dice-btn" data-roll="1d6">d6</button>
+          <button class="dice-btn" data-roll="1d8">d8</button>
+          <button class="dice-btn" data-roll="1d10">d10</button>
+          <button class="dice-btn" data-roll="1d20">d20</button>
+          <button class="dice-btn" data-roll="1d100">d100</button>
+          <div class="dice-divider"></div>
+          <button id="btn-open-log" class="mini-btn" title="로그 열기">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            로그
+          </button>
+        </div>
+        <div class="input-row">
+          <input type="text" id="chat-input"
+                 placeholder="메시지 입력... (/roll 2d6 · /cc 50 심리학)"
+                 autocomplete="off" maxlength="500" />
+          <button id="btn-send-chat" class="btn btn-primary btn-send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============ 플로팅 사이드바: 참가자 ============ -->
+    <aside id="panel-participants" class="side-panel side-panel-right hidden">
+      <div class="panel-header">
+        <h3>참가자</h3>
+        <button class="icon-btn btn-close-panel" data-target="panel-participants">×</button>
+      </div>
+      <ul id="participants-list" class="participants-list"></ul>
+    </aside>
+
+    <!-- ============ 플로팅 사이드바: 시트 ============ -->
+    <aside id="panel-sheet" class="side-panel side-panel-right hidden">
+      <div class="panel-header">
+        <h3>캐릭터 시트</h3>
+        <button class="icon-btn btn-close-panel" data-target="panel-sheet">×</button>
+      </div>
+      <div id="sheet-container" class="sheet-container"></div>
+    </aside>
+
+    <!-- ============ 로그 모달 ============ -->
+    <div id="log-modal" class="modal hidden">
+      <div class="modal-content log-modal-content">
+        <div class="panel-header">
+          <h3>대화 로그</h3>
+          <button class="icon-btn" id="btn-close-log">×</button>
+        </div>
+        <div id="chat-log" class="chat-log"></div>
       </div>
     </div>
-  </div>
 
-  <!-- 맵 크기 설정 모달 -->
-  <div id="map-config-modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>맵 크기 설정</h3>
-      <label>가로 칸 수
-        <input type="number" id="map-cols" min="5" max="80" value="20" />
-      </label>
-      <label>세로 칸 수
-        <input type="number" id="map-rows" min="5" max="80" value="15" />
-      </label>
-      <div class="modal-actions">
-        <button id="btn-map-config-confirm" class="btn btn-primary">적용</button>
-        <button id="btn-map-config-cancel" class="btn btn-secondary">취소</button>
+    <!-- ============ 배경 이미지 모달 ============ -->
+    <div id="bg-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>맵 배경 이미지</h3>
+        <p class="hint">공개된 이미지 URL을 입력하세요 (Imgur, Gyazo, Discord 등)</p>
+        <label>이미지 URL
+          <input type="text" id="bg-url-input" placeholder="https://..." />
+        </label>
+        <div class="modal-actions">
+          <button id="btn-bg-clear" class="btn btn-ghost">배경 제거</button>
+          <div style="flex:1"></div>
+          <button id="btn-bg-cancel" class="btn btn-secondary">취소</button>
+          <button id="btn-bg-confirm" class="btn btn-primary">적용</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 맵 크기 모달 ============ -->
+    <div id="map-config-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>맵 격자 크기</h3>
+        <label>가로 칸 수
+          <input type="number" id="map-cols" min="5" max="80" value="20" />
+        </label>
+        <label>세로 칸 수
+          <input type="number" id="map-rows" min="5" max="80" value="15" />
+        </label>
+        <div class="modal-actions">
+          <button id="btn-map-config-cancel" class="btn btn-secondary">취소</button>
+          <button id="btn-map-config-confirm" class="btn btn-primary">적용</button>
+        </div>
       </div>
     </div>
   </div>
